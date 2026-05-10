@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<!-- saved from url=(0050)file:///C:/Users/gusta/Downloads/guardiao_app.html -->
+<html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Guardião">
+<title>Guardião — Seu Anjo Financeiro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="./index_files/css2" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A84C; --gold-light: #F0D080; --gold-dim: #8A6A20;
+  --dark: #0E0E10; --dark2: #18181C; --dark3: #222228; --dark4: #2E2E36;
+  --text: #F0EDE8; --text-muted: #9A9590; --text-dim: #5A5550;
+  --success: #4CAF7D; --danger: #E05555; --warning: #E0A030; --info: #5B9BD5;
+  --radius: 16px; --radius-sm: 10px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; background: var(--dark); color: var(--text); font-family: 'DM Sans', sans-serif; overflow: hidden; }
+
+#splash { position: fixed; inset: 0; background: var(--dark); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; gap: 16px; transition: opacity 0.6s ease; }
+#splash .halo { width: 100px; height: 100px; border-radius: 50%; background: radial-gradient(circle, #C9A84C33 0%, transparent 70%); display: flex; align-items: center; justify-content: center; font-size: 48px; animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1);opacity:0.8} 50%{transform:scale(1.1);opacity:1} }
+#splash h1 { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--gold); letter-spacing: 2px; }
+#splash p { color: var(--text-muted); font-size: 14px; font-weight: 300; }
+
+#app { height: 100dvh; display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; }
+
+.app-header { padding: 52px 20px 16px; background: linear-gradient(180deg, var(--dark) 0%, var(--dark2) 100%); border-bottom: 0.5px solid var(--dark4); flex-shrink: 0; }
+.header-top { display: flex; align-items: center; justify-content: space-between; }
+.header-agent { display: flex; align-items: center; gap: 10px; }
+.agent-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--gold-dim), var(--gold)); display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 0 12px #C9A84C44; }
+.agent-name { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--gold); }
+.agent-sub { font-size: 11px; color: var(--text-muted); font-weight: 300; }
+.mood-pill { font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 20px; transition: all 0.4s ease; }
+.mood-gentil { background: #4CAF7D22; color: var(--success); border: 0.5px solid #4CAF7D44; }
+.mood-alerta { background: #E0A03022; color: var(--warning); border: 0.5px solid #E0A03044; }
+.mood-firme  { background: #E0555522; color: var(--danger);  border: 0.5px solid #E0555544; }
+
+.tabs { display: flex; background: var(--dark2); border-bottom: 0.5px solid var(--dark4); flex-shrink: 0; overflow-x: auto; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab-btn { flex: 1; min-width: 72px; padding: 10px 4px; font-size: 10px; font-weight: 500; color: var(--text-dim); background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; transition: color 0.2s; letter-spacing: 0.5px; white-space: nowrap; }
+.tab-btn .tab-icon { font-size: 17px; }
+.tab-btn.active { color: var(--gold); }
+.tab-btn.active .tab-bar { background: var(--gold); }
+.tab-bar { width: 20px; height: 2px; border-radius: 2px; background: transparent; transition: background 0.2s; margin-top: 2px; }
+
+.panels { flex: 1; overflow: hidden; position: relative; }
+.panel { position: absolute; inset: 0; overflow-y: auto; display: none; padding: 16px 16px 90px; }
+.panel.active { display: block; }
+.panel::-webkit-scrollbar { display: none; }
+
+/* CHAT */
+.quick-chips { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 14px; padding-bottom: 4px; }
+.quick-chips::-webkit-scrollbar { display: none; }
+.chip { flex-shrink: 0; font-size: 12px; padding: 6px 14px; border-radius: 20px; background: var(--dark3); border: 0.5px solid var(--dark4); color: var(--text-muted); cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+.chip:active { background: var(--dark4); color: var(--gold); }
+.chat-msgs { display: flex; flex-direction: column; gap: 12px; min-height: 200px; }
+.bubble-wrap { display: flex; flex-direction: column; }
+.bubble-wrap.user { align-items: flex-end; }
+.bubble-wrap.ai { align-items: flex-start; }
+.bubble-sender { font-size: 10px; color: var(--text-dim); margin-bottom: 3px; padding: 0 4px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
+.bubble { max-width: 82%; padding: 11px 15px; border-radius: var(--radius); font-size: 14px; line-height: 1.55; font-weight: 300; }
+.bubble.ai { background: var(--dark3); border: 0.5px solid var(--dark4); color: var(--text); border-bottom-left-radius: 4px; }
+.bubble.user { background: linear-gradient(135deg, var(--gold-dim), var(--gold)); color: var(--dark); font-weight: 400; border-bottom-right-radius: 4px; }
+.typing-dots { display: flex; gap: 5px; padding: 14px 16px; }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold-dim); animation: blink 1.2s infinite; }
+.dot:nth-child(2){animation-delay:0.2s} .dot:nth-child(3){animation-delay:0.4s}
+@keyframes blink { 0%,80%,100%{opacity:0.3;transform:scale(0.8)} 40%{opacity:1;transform:scale(1)} }
+
+.chat-input-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: var(--dark2); border-top: 0.5px solid var(--dark4); padding: 10px 16px 28px; display: none; }
+.chat-input-bar.visible { display: block; }
+.input-row { display: flex; gap: 8px; align-items: center; }
+.input-row input { flex: 1; background: var(--dark3); border: 0.5px solid var(--dark4); border-radius: 24px; padding: 10px 16px; font-size: 14px; color: var(--text); font-family: 'DM Sans', sans-serif; outline: none; }
+.input-row input::placeholder { color: var(--text-dim); }
+.send-btn { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; background: linear-gradient(135deg, var(--gold-dim), var(--gold)); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: transform 0.15s; }
+.send-btn:active { transform: scale(0.9); }
+
+/* SHARED COMPONENTS */
+.card { background: var(--dark2); border: 0.5px solid var(--dark3); border-radius: var(--radius); padding: 18px; margin-bottom: 14px; }
+.card-title { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--gold); font-weight: 500; margin-bottom: 14px; }
+.field { margin-bottom: 12px; }
+.field label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 5px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
+.field input, .field select, .field textarea { width: 100%; background: var(--dark3); border: 0.5px solid var(--dark4); border-radius: var(--radius-sm); padding: 11px 14px; font-size: 14px; color: var(--text); font-family: 'DM Sans', sans-serif; outline: none; -webkit-appearance: none; }
+.field textarea { resize: vertical; min-height: 100px; line-height: 1.5; }
+.field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239A9590' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+.primary-btn { width: 100%; padding: 14px; border-radius: var(--radius-sm); border: none; background: linear-gradient(135deg, var(--gold-dim), var(--gold)); color: var(--dark); font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: opacity 0.2s; }
+.primary-btn:active { opacity: 0.8; }
+.secondary-btn { width: 100%; padding: 12px; border-radius: var(--radius-sm); border: 0.5px solid var(--dark4); background: var(--dark3); color: var(--text-muted); font-size: 14px; cursor: pointer; font-family: 'DM Sans', sans-serif; margin-bottom: 10px; transition: all 0.2s; }
+.secondary-btn:active { color: var(--gold); border-color: var(--gold-dim); }
+.empty-state { text-align: center; padding: 40px 20px; color: var(--text-dim); font-size: 13px; }
+.empty-icon { font-size: 36px; margin-bottom: 10px; opacity: 0.4; }
+
+/* GASTOS */
+.tipo-toggle { display: flex; gap: 8px; }
+.tipo-btn { flex: 1; padding: 10px; border-radius: var(--radius-sm); border: 0.5px solid var(--dark4); background: var(--dark3); color: var(--text-muted); font-size: 13px; cursor: pointer; text-align: center; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+.tipo-btn.selected-nec { background: #4CAF7D22; border-color: var(--success); color: var(--success); }
+.tipo-btn.selected-imp { background: #E0A03022; border-color: var(--warning); color: var(--warning); }
+.gastos-list { display: flex; flex-direction: column; gap: 8px; }
+.gasto-row { display: flex; align-items: center; justify-content: space-between; background: var(--dark2); border: 0.5px solid var(--dark3); border-radius: var(--radius-sm); padding: 12px 14px; }
+.gasto-info-name { font-size: 14px; }
+.gasto-info-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.gasto-val { font-size: 15px; font-weight: 500; color: var(--danger); }
+
+/* RESUMO */
+.resumo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.resumo-card { background: var(--dark2); border: 0.5px solid var(--dark3); border-radius: var(--radius); padding: 16px; }
+.resumo-card.full { grid-column: 1/-1; }
+.resumo-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-dim); margin-bottom: 8px; font-weight: 500; }
+.resumo-val { font-family: 'Playfair Display', serif; font-size: 26px; }
+.rv-danger{color:var(--danger)} .rv-success{color:var(--success)} .rv-warning{color:var(--warning)} .rv-gold{color:var(--gold)}
+.progress-bar { height: 4px; background: var(--dark4); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--gold-dim), var(--gold)); transition: width 0.5s ease; }
+.insight-box { background: var(--dark3); border-left: 3px solid var(--gold); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 12px 14px; font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+/* DÍVIDAS */
+.divida-item { background: var(--dark2); border: 0.5px solid var(--dark3); border-radius: var(--radius); padding: 16px; margin-bottom: 10px; }
+.divida-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.divida-nome { font-size: 15px; font-weight: 500; }
+.divida-total { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--danger); }
+.divida-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.divida-plano { background: var(--dark3); border-radius: var(--radius-sm); padding: 12px; margin-top: 10px; font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+.divida-plano strong { color: var(--gold); font-weight: 500; }
+.divida-actions { display: flex; gap: 8px; margin-top: 10px; }
+.divida-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); border: 0.5px solid var(--dark4); background: var(--dark3); color: var(--text-muted); font-size: 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+.divida-btn.danger { border-color: #E0555544; color: var(--danger); }
+
+/* FATURA */
+.upload-area { border: 1.5px dashed var(--dark4); border-radius: var(--radius); padding: 32px 20px; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 14px; }
+.upload-area:hover, .upload-area.drag { border-color: var(--gold-dim); background: #C9A84C08; }
+.upload-icon { font-size: 36px; margin-bottom: 10px; }
+.upload-title { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+.upload-sub { font-size: 12px; color: var(--text-muted); }
+.upload-input { display: none; }
+.analysis-result { background: var(--dark2); border: 0.5px solid var(--dark3); border-radius: var(--radius); padding: 18px; }
+.analysis-title { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--gold); font-weight: 500; margin-bottom: 12px; }
+.analysis-text { font-size: 14px; color: var(--text-muted); line-height: 1.7; white-space: pre-wrap; }
+.tab-divider { height: 0.5px; background: var(--dark4); margin: 16px 0; }
+.or-text { text-align: center; font-size: 12px; color: var(--text-dim); margin: -8px 0 14px; }
+.loading-overlay { display: none; position: fixed; inset: 0; background: #0E0E10CC; z-index: 100; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
+.loading-overlay.visible { display: flex; }
+.loading-text { color: var(--text-muted); font-size: 14px; }
+.spinner { width: 40px; height: 40px; border: 2px solid var(--dark4); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div id="splash" style="opacity: 0; display: none;">
+  <div class="halo">👼</div>
+  <h1>Guardião</h1>
+  <p>Seu anjo da guarda financeiro</p>
+</div>
+
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">Analisando...</div>
+</div>
+
+<div id="app" style="opacity: 1; transition: opacity 0.5s;">
+  <div class="app-header">
+    <div class="header-top">
+      <div class="header-agent">
+        <div class="agent-avatar">👼</div>
+        <div>
+          <div class="agent-name">Guardião</div>
+          <div class="agent-sub">Anjo da guarda financeiro</div>
+        </div>
+      </div>
+      <div class="mood-pill mood-gentil" id="mood-badge">● gentil</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(&#39;chat&#39;)"><span class="tab-icon">💬</span><span>Conversar</span><div class="tab-bar"></div></button>
+    <button class="tab-btn" onclick="switchTab(&#39;gastos&#39;)"><span class="tab-icon">📝</span><span>Registrar</span><div class="tab-bar"></div></button>
+    <button class="tab-btn" onclick="switchTab(&#39;dividas&#39;)"><span class="tab-icon">💳</span><span>Dívidas</span><div class="tab-bar"></div></button>
+    <button class="tab-btn" onclick="switchTab(&#39;fatura&#39;)"><span class="tab-icon">📄</span><span>Fatura</span><div class="tab-bar"></div></button>
+    <button class="tab-btn" onclick="switchTab(&#39;resumo&#39;)"><span class="tab-icon">📊</span><span>Resumo</span><div class="tab-bar"></div></button>
+  </div>
+
+  <div class="panels">
+
+    <!-- CHAT -->
+    <div class="panel active" id="panel-chat">
+      <div class="quick-chips">
+        <div class="chip" onclick="quickSend(&#39;Quero comprar um tênis de R$400 parcelado em 6x&#39;)">👟 Compra por impulso</div>
+        <div class="chip" onclick="quickSend(&#39;Paguei todas as contas do mês em dia!&#39;)">✅ Conquista</div>
+        <div class="chip" onclick="quickSend(&#39;Estou pensando em pegar um empréstimo de R$3000&#39;)">💳 Empréstimo</div>
+        <div class="chip" onclick="quickSend(&#39;Economizei R$300 essa semana&#39;)">💰 Economizei</div>
+        <div class="chip" onclick="quickSend(&#39;Quero entender como sair das dívidas&#39;)">🆘 Sair das dívidas</div>
+      </div>
+      <div class="chat-msgs" id="chat-msgs">
+        <div class="bubble-wrap ai">
+          <div class="bubble-sender">Guardião</div>
+          <div class="bubble ai">Olá! Sou seu anjo da guarda financeiro. Posso te ajudar a controlar gastos, criar um plano para quitar dívidas e analisar sua fatura do cartão. Me conta o que está passando! 🙏</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GASTOS -->
+    <div class="panel" id="panel-gastos">
+      <div class="card">
+        <div class="card-title">Registrar gasto</div>
+        <div class="field"><label>Descrição</label><input type="text" id="g-desc" placeholder="Ex: Almoço, Uber, Netflix..."></div>
+        <div class="field"><label>Valor (R$)</label><input type="number" id="g-valor" placeholder="0,00" min="0" step="0.01" inputmode="decimal"></div>
+        <div class="field"><label>Categoria</label>
+          <select id="g-cat">
+            <option>Alimentação</option><option>Transporte</option><option>Lazer</option>
+            <option>Vestuário</option><option>Saúde</option><option>Assinaturas</option><option>Outros</option>
+          </select>
+        </div>
+        <div class="field"><label>Foi necessário ou por impulso?</label>
+          <div class="tipo-toggle">
+            <button class="tipo-btn selected-nec" id="btn-nec" onclick="setTipo(&#39;necessario&#39;)">✓ Necessário</button>
+            <button class="tipo-btn" id="btn-imp" onclick="setTipo(&#39;impulso&#39;)">⚡ Impulso</button>
+          </div>
+        </div>
+        <button class="primary-btn" onclick="addGasto()">Registrar gasto</button>
+      </div>
+      <div id="gastos-list-wrap"><div class="empty-state"><div class="empty-icon">📋</div>Nenhum gasto registrado ainda.</div></div>
+    </div>
+
+    <!-- DÍVIDAS -->
+    <div class="panel" id="panel-dividas">
+      <div class="card">
+        <div class="card-title">Adicionar dívida</div>
+        <div class="field"><label>Nome da dívida</label><input type="text" id="d-nome" placeholder="Ex: Cartão Nubank, Empréstimo banco..."></div>
+        <div class="field"><label>Valor total devido (R$)</label><input type="number" id="d-total" placeholder="0,00" min="0" step="0.01" inputmode="decimal"></div>
+        <div class="field"><label>Taxa de juros ao mês (%)</label><input type="number" id="d-juros" placeholder="Ex: 2.5" min="0" step="0.1" inputmode="decimal"></div>
+        <div class="field"><label>Quanto pode pagar por mês (R$)</label><input type="number" id="d-parcela" placeholder="0,00" min="0" step="0.01" inputmode="decimal"></div>
+        <button class="primary-btn" onclick="addDivida()">Calcular plano de quitação</button>
+      </div>
+      <div id="dividas-list"><div class="empty-state"><div class="empty-icon">💳</div>Nenhuma dívida cadastrada ainda.<br>Adicione uma acima para receber seu plano de quitação.</div></div>
+    </div>
+
+    <!-- FATURA -->
+    <div class="panel" id="panel-fatura">
+      <div class="card">
+        <div class="card-title">Analisar fatura do cartão</div>
+
+        <div class="upload-area" id="upload-area" onclick="document.getElementById(&#39;pdf-input&#39;).click()">
+          <div class="upload-icon">📎</div>
+          <div class="upload-title">Enviar PDF da fatura</div>
+          <div class="upload-sub">Toque aqui para selecionar o arquivo PDF</div>
+          <input type="file" id="pdf-input" class="upload-input" accept=".pdf,application/pdf" onchange="handlePDF(this)">
+        </div>
+
+        <div class="tab-divider"></div>
+        <div class="or-text">— ou cole o texto da fatura manualmente —</div>
+
+        <div class="field">
+          <label>Cole aqui os itens da fatura</label>
+          <textarea id="fatura-texto" placeholder="Ex:
+05/04 iFood R$45,90
+07/04 Amazon R$129,00
+10/04 Netflix R$44,90
+..."></textarea>
+        </div>
+        <button class="primary-btn" onclick="analisarFaturaTexto()">Analisar fatura</button>
+      </div>
+      <div id="fatura-result" style="display:none" class="analysis-result">
+        <div class="analysis-title">📊 Análise do Guardião</div>
+        <div class="analysis-text" id="fatura-analysis-text"></div>
+      </div>
+    </div>
+
+    <!-- RESUMO -->
+    <div class="panel" id="panel-resumo">
+      <div class="resumo-grid">
+        <div class="resumo-card full">
+          <div class="resumo-label">Total gasto registrado</div>
+          <div class="resumo-val rv-gold" id="r-total">R$ 0,00</div>
+          <div class="progress-bar"><div class="progress-fill" id="r-bar" style="width:0%"></div></div>
+        </div>
+        <div class="resumo-card"><div class="resumo-label">Necessário</div><div class="resumo-val rv-success" id="r-nec">R$ 0,00</div></div>
+        <div class="resumo-card"><div class="resumo-label">Por impulso</div><div class="resumo-val rv-warning" id="r-imp">R$ 0,00</div></div>
+        <div class="resumo-card full"><div class="resumo-label">Total em dívidas</div><div class="resumo-val rv-danger" id="r-dividas">R$ 0,00</div></div>
+        <div class="resumo-card full">
+          <div class="resumo-label">Análise do Guardião</div>
+          <div class="insight-box" id="r-insight">Registre gastos e dívidas para receber uma análise personalizada.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-input-bar visible" id="chat-bar">
+    <div class="input-row">
+      <input type="text" id="chat-input" placeholder="Me conta o que está pensando..." onkeydown="if(event.key===&#39;Enter&#39;)sendMsg()">
+      <button class="send-btn" onclick="sendMsg()">➤</button>
+    </div>
+  </div>
+</div>
+
+<script src="./index_files/pdf.min.js.download"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+let gastos = JSON.parse(localStorage.getItem('guardiao_gastos') || '[]');
+let dividas = JSON.parse(localStorage.getItem('guardiao_dividas') || '[]');
+let tipoSelecionado = 'necessario';
+let isLoading = false;
+let activeTab = 'chat';
+
+setTimeout(() => {
+  document.getElementById('splash').style.opacity = '0';
+  setTimeout(() => { document.getElementById('splash').style.display='none'; document.getElementById('app').style.opacity='1'; }, 600);
+}, 1800);
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  const tabs = ['chat','gastos','dividas','fatura','resumo'];
+  document.querySelectorAll('.tab-btn')[tabs.indexOf(tab)].classList.add('active');
+  document.getElementById('panel-'+tab).classList.add('active');
+  document.getElementById('chat-bar').className = 'chat-input-bar'+(tab==='chat'?' visible':'');
+  if(tab==='gastos') renderGastos();
+  if(tab==='dividas') renderDividas();
+  if(tab==='resumo') renderResumo();
+}
+
+function setTipo(tipo) {
+  tipoSelecionado = tipo;
+  document.getElementById('btn-nec').className = 'tipo-btn'+(tipo==='necessario'?' selected-nec':'');
+  document.getElementById('btn-imp').className = 'tipo-btn'+(tipo==='impulso'?' selected-imp':'');
+}
+
+function quickSend(text) { document.getElementById('chat-input').value=text; sendMsg(); }
+
+async function callAI(system, userMsg) {
+  const resp = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:1500, system, messages:[{role:"user",content:userMsg}] })
+  });
+  const data = await resp.json();
+  return (data.content||[]).map(i=>i.text||'').join('');
+}
+
+async function sendMsg() {
+  if(isLoading) return;
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value='';
+  addBubble(text,'user');
+  isLoading=true; showTyping();
+  const resumoGastos = gastos.length>0 ? '\nGastos: '+gastos.map(g=>`${g.desc} R$${g.valor.toFixed(2)} (${g.tipo})`).join(', ') : '';
+  const resumoDividas = dividas.length>0 ? '\nDívidas: '+dividas.map(d=>`${d.nome} R$${d.total.toFixed(2)} a ${d.juros}%am`).join(', ') : '';
+  const system = `Você é o "Guardião", conselheiro financeiro pessoal com personalidade adaptável.
+REGRAS: Gastos impulso/empréstimos: FIRME, persuasivo, use metáforas impactantes. Conquistas/economias: GENTIL, celebre! Situações neutras: EQUILIBRADO.
+ESTILO: Amigo próximo. Frases curtas. Máx 5 frases. Português brasileiro informal. Sem jargão.${resumoGastos}${resumoDividas}
+Ao final escreva apenas: MOOD:gentil ou MOOD:alerta ou MOOD:firme`;
+  try {
+    const full = await callAI(system, text);
+    const lines = full.split('\n');
+    const moodLine = lines.find(l=>l.trim().startsWith('MOOD:'));
+    const msg = lines.filter(l=>!l.trim().startsWith('MOOD:')).join('\n').trim();
+    if(moodLine) setMood(moodLine.replace('MOOD:','').trim());
+    removeTyping(); addBubble(msg,'ai');
+  } catch(e) { removeTyping(); addBubble('Problema de conexão. Tente novamente.','ai'); }
+  isLoading=false;
+}
+
+function setMood(mood) {
+  const badge=document.getElementById('mood-badge');
+  const labels={gentil:'● gentil',alerta:'● alerta',firme:'● firme'};
+  badge.className='mood-pill mood-'+mood; badge.textContent=labels[mood]||'● gentil';
+}
+function addBubble(text,who) {
+  const msgs=document.getElementById('chat-msgs');
+  const wrap=document.createElement('div'); wrap.className='bubble-wrap '+who;
+  if(who==='ai'){const s=document.createElement('div');s.className='bubble-sender';s.textContent='Guardião';wrap.appendChild(s);}
+  const b=document.createElement('div'); b.className='bubble '+who; b.textContent=text;
+  wrap.appendChild(b); msgs.appendChild(wrap);
+  wrap.scrollIntoView({behavior:'smooth',block:'end'});
+}
+function showTyping() {
+  const msgs=document.getElementById('chat-msgs');
+  const wrap=document.createElement('div'); wrap.className='bubble-wrap ai'; wrap.id='typing';
+  const b=document.createElement('div'); b.className='bubble ai';
+  b.innerHTML='<div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  wrap.appendChild(b); msgs.appendChild(wrap); wrap.scrollIntoView({behavior:'smooth',block:'end'});
+}
+function removeTyping(){const t=document.getElementById('typing');if(t)t.remove();}
+
+// GASTOS
+function addGasto() {
+  const desc=document.getElementById('g-desc').value.trim();
+  const valor=parseFloat(document.getElementById('g-valor').value);
+  const cat=document.getElementById('g-cat').value;
+  if(!desc||isNaN(valor)||valor<=0){alert('Preencha descrição e valor.');return;}
+  gastos.push({desc,valor,cat,tipo:tipoSelecionado,data:new Date().toLocaleDateString('pt-BR')});
+  localStorage.setItem('guardiao_gastos',JSON.stringify(gastos));
+  document.getElementById('g-desc').value=''; document.getElementById('g-valor').value='';
+  renderGastos();
+  if(tipoSelecionado==='impulso'){switchTab('chat');setTimeout(()=>{document.getElementById('chat-input').value=`Registrei gasto de R$${valor.toFixed(2)} em ${desc} — foi por impulso. O que você acha?`;sendMsg();},300);}
+}
+function renderGastos() {
+  const wrap=document.getElementById('gastos-list-wrap');
+  if(!gastos.length){wrap.innerHTML='<div class="empty-state"><div class="empty-icon">📋</div>Nenhum gasto registrado ainda.</div>';return;}
+  wrap.innerHTML='<div class="gastos-list">'+[...gastos].reverse().map(g=>`<div class="gasto-row"><div><div class="gasto-info-name">${g.desc}</div><div class="gasto-info-meta">${g.cat} · ${g.tipo==='impulso'?'⚡ impulso':'✓ necessário'} · ${g.data}</div></div><div class="gasto-val">R$ ${g.valor.toFixed(2)}</div></div>`).join('')+'</div>';
+}
+
+// DÍVIDAS
+function calcularMeses(total,juros,parcela) {
+  if(juros===0) return Math.ceil(total/parcela);
+  const r=juros/100;
+  if(parcela<=total*r) return Infinity;
+  return Math.ceil(Math.log(parcela/(parcela-total*r))/Math.log(1+r));
+}
+function calcularTotalPago(total,juros,parcela,meses) {
+  if(meses===Infinity) return Infinity;
+  return parcela*meses;
+}
+async function addDivida() {
+  const nome=document.getElementById('d-nome').value.trim();
+  const total=parseFloat(document.getElementById('d-total').value);
+  const juros=parseFloat(document.getElementById('d-juros').value)||0;
+  const parcela=parseFloat(document.getElementById('d-parcela').value);
+  if(!nome||isNaN(total)||total<=0||isNaN(parcela)||parcela<=0){alert('Preencha todos os campos.');return;}
+  const meses=calcularMeses(total,juros,parcela);
+  if(meses===Infinity){alert('O valor da parcela é menor que os juros mensais. Aumente o valor da parcela.');return;}
+  const totalPago=calcularTotalPago(total,juros,parcela,meses);
+  const jurosTotal=totalPago-total;
+  showLoading('Criando seu plano de quitação...');
+  let conselho='';
+  try {
+    const prompt=`O usuário tem uma dívida de "${nome}" no valor de R$${total.toFixed(2)}, com juros de ${juros}% ao mês. Vai pagar R$${parcela.toFixed(2)} por mês. Vai quitar em ${meses} meses, pagando R$${totalPago.toFixed(2)} no total (R$${jurosTotal.toFixed(2)} só de juros). Dê um conselho motivador e prático em 3-4 frases curtas em português informal. Sugira uma estratégia para quitar mais rápido se possível.`;
+    conselho = await callAI('Você é o Guardião, conselheiro financeiro amigo e direto. Responda em português brasileiro informal, máximo 4 frases.', prompt);
+  } catch(e) { conselho='Mantenha o foco! Cada pagamento te aproxima da liberdade financeira.'; }
+  hideLoading();
+  dividas.push({id:Date.now(),nome,total,juros,parcela,meses,totalPago,jurosTotal,conselho,data:new Date().toLocaleDateString('pt-BR')});
+  localStorage.setItem('guardiao_dividas',JSON.stringify(dividas));
+  document.getElementById('d-nome').value=''; document.getElementById('d-total').value='';
+  document.getElementById('d-juros').value=''; document.getElementById('d-parcela').value='';
+  renderDividas();
+}
+function removeDivida(id) {
+  dividas=dividas.filter(d=>d.id!==id);
+  localStorage.setItem('guardiao_dividas',JSON.stringify(dividas));
+  renderDividas();
+}
+function renderDividas() {
+  const wrap=document.getElementById('dividas-list');
+  if(!dividas.length){wrap.innerHTML='<div class="empty-state"><div class="empty-icon">💳</div>Nenhuma dívida cadastrada ainda.<br>Adicione uma acima para receber seu plano de quitação.</div>';return;}
+  wrap.innerHTML=dividas.map(d=>`
+    <div class="divida-item">
+      <div class="divida-header">
+        <div><div class="divida-nome">${d.nome}</div><div class="divida-meta">Cadastrada em ${d.data}</div></div>
+        <div class="divida-total">R$ ${d.total.toFixed(2)}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:12px;color:var(--text-muted);margin-bottom:8px">
+        <div>⏱ <strong style="color:var(--text)">${d.meses} meses</strong><br>para quitar</div>
+        <div>💸 <strong style="color:var(--danger)">R$ ${d.jurosTotal.toFixed(2)}</strong><br>só de juros</div>
+        <div>📅 <strong style="color:var(--text)">R$ ${d.parcela.toFixed(2)}</strong><br>por mês</div>
+      </div>
+      <div class="divida-plano">${d.conselho}</div>
+      <div class="divida-actions">
+        <button class="divida-btn" onclick="switchTab('chat');setTimeout(()=>{document.getElementById('chat-input').value='Me ajuda com estratégias para quitar mais rápido minha dívida de ${d.nome} de R$${d.total.toFixed(2)}';sendMsg();},300)">💬 Pedir conselho</button>
+        <button class="divida-btn danger" onclick="removeDivida(${d.id})">✕ Remover</button>
+      </div>
+    </div>`).join('');
+}
+
+// FATURA PDF
+async function handlePDF(input) {
+  const file=input.files[0]; if(!file) return;
+  showLoading('Lendo o PDF da fatura...');
+  try {
+    const arrayBuffer=await file.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:arrayBuffer}).promise;
+    let texto='';
+    for(let i=1;i<=pdf.numPages;i++){
+      const page=await pdf.getPage(i);
+      const content=await page.getTextContent();
+      texto+=content.items.map(item=>item.str).join(' ')+'\n';
+    }
+    if(!texto.trim()){hideLoading();alert('Não consegui ler o texto do PDF. Tente colar o texto manualmente.');return;}
+    document.getElementById('loading-text').textContent='O Guardião está analisando sua fatura...';
+    await analisarFaturaComTexto(texto);
+  } catch(e) { hideLoading(); alert('Erro ao ler o PDF. Tente colar o texto manualmente.'); }
+  input.value='';
+}
+async function analisarFaturaTexto() {
+  const texto=document.getElementById('fatura-texto').value.trim();
+  if(!texto){alert('Cole o texto da fatura primeiro.');return;}
+  showLoading('O Guardião está analisando sua fatura...');
+  await analisarFaturaComTexto(texto);
+}
+async function analisarFaturaComTexto(texto) {
+  try {
+    const system=`Você é o Guardião, conselheiro financeiro pessoal. Analise a fatura do cartão de crédito do usuário e:
+1. Identifique o valor total
+2. Agrupe os gastos por categoria (alimentação, lazer, transporte, assinaturas, etc.)
+3. Identifique os 3 maiores gastos
+4. Identifique gastos que parecem desnecessários ou por impulso
+5. Dê 3 sugestões práticas e específicas para reduzir os gastos no próximo mês
+6. Calcule quanto poderia economizar seguindo suas sugestões
+Seja direto, amigo, use português brasileiro informal. Formate a resposta de forma clara com seções.`;
+    const full=await callAI(system,`Analise esta fatura:\n\n${texto}`);
+    hideLoading();
+    document.getElementById('fatura-result').style.display='block';
+    document.getElementById('fatura-analysis-text').textContent=full;
+    document.getElementById('fatura-result').scrollIntoView({behavior:'smooth'});
+  } catch(e) { hideLoading(); alert('Erro na análise. Verifique sua conexão.'); }
+}
+
+// RESUMO
+function renderResumo() {
+  const total=gastos.reduce((s,g)=>s+g.valor,0);
+  const nec=gastos.filter(g=>g.tipo==='necessario').reduce((s,g)=>s+g.valor,0);
+  const imp=gastos.filter(g=>g.tipo==='impulso').reduce((s,g)=>s+g.valor,0);
+  const totalDividas=dividas.reduce((s,d)=>s+d.total,0);
+  document.getElementById('r-total').textContent='R$ '+total.toFixed(2);
+  document.getElementById('r-nec').textContent='R$ '+nec.toFixed(2);
+  document.getElementById('r-imp').textContent='R$ '+imp.toFixed(2);
+  document.getElementById('r-dividas').textContent='R$ '+totalDividas.toFixed(2);
+  const pct=total>0?Math.min((imp/total)*100,100):0;
+  document.getElementById('r-bar').style.width=pct+'%';
+  const insight=document.getElementById('r-insight');
+  if(!gastos.length&&!dividas.length){insight.textContent='Registre gastos e dívidas para receber uma análise personalizada.';return;}
+  if(totalDividas>0&&imp>0) insight.textContent=`Você tem R$${totalDividas.toFixed(2)} em dívidas e ainda gastou R$${imp.toFixed(2)} por impulso. Cada real gasto por impulso poderia estar quitando sua dívida mais rápido. Vá na aba Dívidas para ver seu plano de quitação.`;
+  else if(totalDividas>0) insight.textContent=`Você tem R$${totalDividas.toFixed(2)} em dívidas, mas está controlando os impulsos! Continue assim e use o extra para pagar as dívidas mais rápido.`;
+  else if(pct>40) insight.textContent=`${pct.toFixed(0)}% dos seus gastos foram por impulso — R$${imp.toFixed(2)}. Esse dinheiro poderia estar numa reserva de emergência rendendo para você.`;
+  else insight.textContent=`Ótimo controle! Apenas ${pct.toFixed(0)}% de gastos por impulso. Continue monitorando e use a aba Fatura para analisar seu cartão.`;
+}
+
+function showLoading(text){ document.getElementById('loading-text').textContent=text||'Carregando...'; document.getElementById('loading').classList.add('visible'); }
+function hideLoading(){ document.getElementById('loading').classList.remove('visible'); }
+</script>
+
+
+</body></html>
