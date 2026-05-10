@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<!-- saved from url=(0050)file:///C:/Users/gusta/Downloads/guardiao_app.html -->
-<html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Guardião">
 <title>Guardião — Seu Anjo Financeiro</title>
-<link rel="preconnect" href="https://fonts.googleapis.com/">
-<link href="./index_files/css2" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
   --gold: #C9A84C; --gold-light: #F0D080; --gold-dim: #8A6A20;
@@ -148,7 +148,7 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
 </head>
 <body>
 
-<div id="splash" style="opacity: 0; display: none;">
+<div id="splash">
   <div class="halo">👼</div>
   <h1>Guardião</h1>
   <p>Seu anjo da guarda financeiro</p>
@@ -159,7 +159,7 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
   <div class="loading-text" id="loading-text">Analisando...</div>
 </div>
 
-<div id="app" style="opacity: 1; transition: opacity 0.5s;">
+<div id="app" style="opacity:0;transition:opacity 0.5s ease;">
   <div class="app-header">
     <div class="header-top">
       <div class="header-agent">
@@ -174,11 +174,11 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
   </div>
 
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab(&#39;chat&#39;)"><span class="tab-icon">💬</span><span>Conversar</span><div class="tab-bar"></div></button>
-    <button class="tab-btn" onclick="switchTab(&#39;gastos&#39;)"><span class="tab-icon">📝</span><span>Registrar</span><div class="tab-bar"></div></button>
-    <button class="tab-btn" onclick="switchTab(&#39;dividas&#39;)"><span class="tab-icon">💳</span><span>Dívidas</span><div class="tab-bar"></div></button>
-    <button class="tab-btn" onclick="switchTab(&#39;fatura&#39;)"><span class="tab-icon">📄</span><span>Fatura</span><div class="tab-bar"></div></button>
-    <button class="tab-btn" onclick="switchTab(&#39;resumo&#39;)"><span class="tab-icon">📊</span><span>Resumo</span><div class="tab-bar"></div></button>
+    <button class="tab-btn active" onclick="switchTab('chat')"><span class="tab-icon">💬</span><span>Conversar</span><div class="tab-bar"></div></button>
+    <button class="tab-btn" onclick="switchTab('gastos')"><span class="tab-icon">📝</span><span>Registrar</span><div class="tab-bar"></div></button>
+    <button class="tab-btn" onclick="switchTab('dividas')"><span class="tab-icon">💳</span><span>Dívidas</span><div class="tab-bar"></div></button>
+    <button class="tab-btn" onclick="switchTab('fatura')"><span class="tab-icon">📄</span><span>Fatura</span><div class="tab-bar"></div></button>
+    <button class="tab-btn" onclick="switchTab('resumo')"><span class="tab-icon">📊</span><span>Resumo</span><div class="tab-bar"></div></button>
   </div>
 
   <div class="panels">
@@ -186,11 +186,11 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
     <!-- CHAT -->
     <div class="panel active" id="panel-chat">
       <div class="quick-chips">
-        <div class="chip" onclick="quickSend(&#39;Quero comprar um tênis de R$400 parcelado em 6x&#39;)">👟 Compra por impulso</div>
-        <div class="chip" onclick="quickSend(&#39;Paguei todas as contas do mês em dia!&#39;)">✅ Conquista</div>
-        <div class="chip" onclick="quickSend(&#39;Estou pensando em pegar um empréstimo de R$3000&#39;)">💳 Empréstimo</div>
-        <div class="chip" onclick="quickSend(&#39;Economizei R$300 essa semana&#39;)">💰 Economizei</div>
-        <div class="chip" onclick="quickSend(&#39;Quero entender como sair das dívidas&#39;)">🆘 Sair das dívidas</div>
+        <div class="chip" onclick="quickSend('Quero comprar um tênis de R$400 parcelado em 6x')">👟 Compra por impulso</div>
+        <div class="chip" onclick="quickSend('Paguei todas as contas do mês em dia!')">✅ Conquista</div>
+        <div class="chip" onclick="quickSend('Estou pensando em pegar um empréstimo de R$3000')">💳 Empréstimo</div>
+        <div class="chip" onclick="quickSend('Economizei R$300 essa semana')">💰 Economizei</div>
+        <div class="chip" onclick="quickSend('Quero entender como sair das dívidas')">🆘 Sair das dívidas</div>
       </div>
       <div class="chat-msgs" id="chat-msgs">
         <div class="bubble-wrap ai">
@@ -204,8 +204,8 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
     <div class="panel" id="panel-gastos">
       <div class="card">
         <div class="card-title">Registrar gasto</div>
-        <div class="field"><label>Descrição</label><input type="text" id="g-desc" placeholder="Ex: Almoço, Uber, Netflix..."></div>
-        <div class="field"><label>Valor (R$)</label><input type="number" id="g-valor" placeholder="0,00" min="0" step="0.01" inputmode="decimal"></div>
+        <div class="field"><label>Descrição</label><input type="text" id="g-desc" placeholder="Ex: Almoço, Uber, Netflix..." /></div>
+        <div class="field"><label>Valor (R$)</label><input type="number" id="g-valor" placeholder="0,00" min="0" step="0.01" inputmode="decimal" /></div>
         <div class="field"><label>Categoria</label>
           <select id="g-cat">
             <option>Alimentação</option><option>Transporte</option><option>Lazer</option>
@@ -214,8 +214,8 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
         </div>
         <div class="field"><label>Foi necessário ou por impulso?</label>
           <div class="tipo-toggle">
-            <button class="tipo-btn selected-nec" id="btn-nec" onclick="setTipo(&#39;necessario&#39;)">✓ Necessário</button>
-            <button class="tipo-btn" id="btn-imp" onclick="setTipo(&#39;impulso&#39;)">⚡ Impulso</button>
+            <button class="tipo-btn selected-nec" id="btn-nec" onclick="setTipo('necessario')">✓ Necessário</button>
+            <button class="tipo-btn" id="btn-imp" onclick="setTipo('impulso')">⚡ Impulso</button>
           </div>
         </div>
         <button class="primary-btn" onclick="addGasto()">Registrar gasto</button>
@@ -227,10 +227,10 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
     <div class="panel" id="panel-dividas">
       <div class="card">
         <div class="card-title">Adicionar dívida</div>
-        <div class="field"><label>Nome da dívida</label><input type="text" id="d-nome" placeholder="Ex: Cartão Nubank, Empréstimo banco..."></div>
-        <div class="field"><label>Valor total devido (R$)</label><input type="number" id="d-total" placeholder="0,00" min="0" step="0.01" inputmode="decimal"></div>
-        <div class="field"><label>Taxa de juros ao mês (%)</label><input type="number" id="d-juros" placeholder="Ex: 2.5" min="0" step="0.1" inputmode="decimal"></div>
-        <div class="field"><label>Quanto pode pagar por mês (R$)</label><input type="number" id="d-parcela" placeholder="0,00" min="0" step="0.01" inputmode="decimal"></div>
+        <div class="field"><label>Nome da dívida</label><input type="text" id="d-nome" placeholder="Ex: Cartão Nubank, Empréstimo banco..." /></div>
+        <div class="field"><label>Valor total devido (R$)</label><input type="number" id="d-total" placeholder="0,00" min="0" step="0.01" inputmode="decimal" /></div>
+        <div class="field"><label>Taxa de juros ao mês (%)</label><input type="number" id="d-juros" placeholder="Ex: 2.5" min="0" step="0.1" inputmode="decimal" /></div>
+        <div class="field"><label>Quanto pode pagar por mês (R$)</label><input type="number" id="d-parcela" placeholder="0,00" min="0" step="0.01" inputmode="decimal" /></div>
         <button class="primary-btn" onclick="addDivida()">Calcular plano de quitação</button>
       </div>
       <div id="dividas-list"><div class="empty-state"><div class="empty-icon">💳</div>Nenhuma dívida cadastrada ainda.<br>Adicione uma acima para receber seu plano de quitação.</div></div>
@@ -241,11 +241,11 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
       <div class="card">
         <div class="card-title">Analisar fatura do cartão</div>
 
-        <div class="upload-area" id="upload-area" onclick="document.getElementById(&#39;pdf-input&#39;).click()">
+        <div class="upload-area" id="upload-area" onclick="document.getElementById('pdf-input').click()">
           <div class="upload-icon">📎</div>
           <div class="upload-title">Enviar PDF da fatura</div>
           <div class="upload-sub">Toque aqui para selecionar o arquivo PDF</div>
-          <input type="file" id="pdf-input" class="upload-input" accept=".pdf,application/pdf" onchange="handlePDF(this)">
+          <input type="file" id="pdf-input" class="upload-input" accept=".pdf,application/pdf" onchange="handlePDF(this)" />
         </div>
 
         <div class="tab-divider"></div>
@@ -253,11 +253,7 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
 
         <div class="field">
           <label>Cole aqui os itens da fatura</label>
-          <textarea id="fatura-texto" placeholder="Ex:
-05/04 iFood R$45,90
-07/04 Amazon R$129,00
-10/04 Netflix R$44,90
-..."></textarea>
+          <textarea id="fatura-texto" placeholder="Ex:&#10;05/04 iFood R$45,90&#10;07/04 Amazon R$129,00&#10;10/04 Netflix R$44,90&#10;..."></textarea>
         </div>
         <button class="primary-btn" onclick="analisarFaturaTexto()">Analisar fatura</button>
       </div>
@@ -288,13 +284,13 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
 
   <div class="chat-input-bar visible" id="chat-bar">
     <div class="input-row">
-      <input type="text" id="chat-input" placeholder="Me conta o que está pensando..." onkeydown="if(event.key===&#39;Enter&#39;)sendMsg()">
+      <input type="text" id="chat-input" placeholder="Me conta o que está pensando..." onkeydown="if(event.key==='Enter')sendMsg()" />
       <button class="send-btn" onclick="sendMsg()">➤</button>
     </div>
   </div>
 </div>
 
-<script src="./index_files/pdf.min.js.download"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -532,6 +528,5 @@ function renderResumo() {
 function showLoading(text){ document.getElementById('loading-text').textContent=text||'Carregando...'; document.getElementById('loading').classList.add('visible'); }
 function hideLoading(){ document.getElementById('loading').classList.remove('visible'); }
 </script>
-
-
-</body></html>
+</body>
+</html>
